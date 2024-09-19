@@ -1,4 +1,3 @@
-// BookItem.jsx
 import React from 'react';
 
 const BookItem = ({ book, onStatusChange }) => (

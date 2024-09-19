@@ -1,4 +1,3 @@
-// AddBookForm.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -32,7 +31,7 @@ const AddBookForm = () => {
         return;
       }
   
-      navigate('/home'); // Redirige a la página de inicio o donde esté la lista de libros
+      navigate('/home'); 
     } catch (err) {
       console.error('Error adding book:', err);
       setError('Error adding book');

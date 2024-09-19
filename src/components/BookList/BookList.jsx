@@ -1,6 +1,5 @@
-// BooksList.jsx
 import React, { useEffect, useState } from 'react';
-import BookItem from './BookItem'; // Asegúrate de tener este componente
+import BookItem from './BookItem';
 
 const BooksList = () => {
   const [books, setBooks] = useState([]);
