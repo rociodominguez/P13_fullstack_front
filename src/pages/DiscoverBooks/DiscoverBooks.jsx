@@ -5,11 +5,10 @@ const DiscoverBooksPage = () => {
   const [query, setQuery] = useState('');
   const [books, setBooks] = useState([]);
   const [error, setError] = useState('');
-  const [addedBooks, setAddedBooks] = useState(new Set()); // Estado para almacenar IDs de libros añadidos
+  const [addedBooks, setAddedBooks] = useState(new Set());
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch previously added books
     const fetchAddedBooks = async () => {
       const token = localStorage.getItem('token');
       try {
@@ -25,7 +24,7 @@ const DiscoverBooksPage = () => {
         }
 
         const data = await response.json();
-        const ids = new Set(data.map(book => book.title + book.author)); // Genera un set de IDs de libros
+        const ids = new Set(data.map(book => book.title + book.author)); 
         setAddedBooks(ids);
       } catch (error) {
         console.error('Error fetching added books:', error);
@@ -74,8 +73,7 @@ const DiscoverBooksPage = () => {
         body: JSON.stringify({
           title: book.volumeInfo.title,
           author: book.volumeInfo.authors ? book.volumeInfo.authors.join(', ') : 'Unknown',
-          status,
-          // Añade otros campos según sea necesario
+          status
         }),
       });
 
@@ -85,8 +83,8 @@ const DiscoverBooksPage = () => {
 
       const result = await response.json();
       console.log('Book added:', result);
-      setAddedBooks(prev => new Set(prev).add(bookId)); // Actualiza el estado de libros añadidos
-      navigate('/home'); // Redirige al usuario a la página de inicio
+      setAddedBooks(prev => new Set(prev).add(bookId));
+      navigate('/home'); 
     } catch (error) {
       console.error('Error adding book:', error);
       setError('Failed to add book');

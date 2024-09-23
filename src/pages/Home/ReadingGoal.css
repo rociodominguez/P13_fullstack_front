@@ -1,0 +1,16 @@
+.reading-goal {
+    margin-top: 20px;
+  }
+  
+  .reading-goal label {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  .reading-goal input {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 60px;
+  }
+  

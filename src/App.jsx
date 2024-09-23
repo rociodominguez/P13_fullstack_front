@@ -8,6 +8,7 @@ import AddBookForm from './components/AddBook/AddBook';
 import DiscoverBooksPage from './pages/DiscoverBooks/DiscoverBooks';
 
 const App = () => (
+  
   <Router>
     <Routes>
       <Route path="/login" element={<LoginPage />} />

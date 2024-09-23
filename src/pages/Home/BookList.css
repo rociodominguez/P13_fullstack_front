@@ -1,0 +1,24 @@
+.book-list {
+    margin: 20px 0;
+  }
+  
+  .book-list-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .book-item {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 8px;
+  }
+  
+  .book-info {
+    font-size: 1.1rem;
+  }
+  
+  .no-books-message {
+    color: #999;
+  }
+  

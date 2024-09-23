@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './LoginPage.css';
 
 const LoginPage = () => {
   const [name, setName] = useState('');
@@ -34,33 +35,36 @@ const LoginPage = () => {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
+    <form className="form" onSubmit={handleLogin}>
+      <p className="form-title">Sign in to your account</p>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleLogin}>
-        <div>
-          <label htmlFor="name">Name:</label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Login</button>
-      </form>
-    </div>
+      <div className="input-container">
+        <input
+          type="text"
+          placeholder="Enter username"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+        <span></span>
+      </div>
+      <div className="input-container">
+        <input
+          type="password"
+          placeholder="Enter password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
+      <button type="submit" className="submit">
+      Sign in 🌼
+      </button>
+      <p className="signup-link">
+        No account?
+        <a href="/register"> Sign up</a>
+      </p>
+    </form>
   );
 };
 
