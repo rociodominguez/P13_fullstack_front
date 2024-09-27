@@ -18,15 +18,17 @@ const LoginPage = () => {
         },
         body: JSON.stringify({ name, password }),
       });
-
+  
       if (!response.ok) {
         const data = await response.json();
         setError(data.error || 'Error al iniciar sesión');
         return;
       }
-
+  
       const data = await response.json();
       localStorage.setItem('token', data.token);
+      localStorage.setItem('username', data.name); 
+      localStorage.setItem('readingGoal', data.readingGoal || 0); 
       navigate('/home');
     } catch (err) {
       console.error('Error al iniciar sesión:', err);
@@ -58,7 +60,7 @@ const LoginPage = () => {
         />
       </div>
       <button type="submit" className="submit">
-      Sign in 🌼
+        Sign in 🌼
       </button>
       <p className="signup-link">
         No account?

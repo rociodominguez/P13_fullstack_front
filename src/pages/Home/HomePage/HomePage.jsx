@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ReadingGoal from './ReadingGoal';
-import BookList from './BookList';
+import ReadingGoal from '../ReadingGoal/ReadingGoal';
+import BookList from '../BookList/BookList';
+import UserGreeting from '../UserGreeting/UserGreeting';
+import NavigationButtons from '../NavigationButton/NavigationButton';
 import './HomePage.css';
-import { Button, ButtonGroup } from '@chakra-ui/react'
 
 const HomePage = () => {
   const [books, setBooks] = useState({ wantToRead: [], currentlyReading: [], read: [] });
   const [readingGoal, setReadingGoal] = useState(0);
   const [inputGoal, setInputGoal] = useState('');
+  const [booksReadCount, setBooksReadCount] = useState(0);
   const navigate = useNavigate();
+
+  const userName = localStorage.getItem('username');
 
   useEffect(() => {
     const storedGoal = localStorage.getItem('readingGoal');
@@ -19,6 +23,11 @@ const HomePage = () => {
     }
     fetchBooks();
   }, []);
+
+  useEffect(() => {
+    const currentReadCount = books.read.length;
+    setBooksReadCount(currentReadCount);
+  }, [books]);
 
   const fetchBooks = async () => {
     const token = localStorage.getItem('token');
@@ -43,7 +52,8 @@ const HomePage = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    navigate('/login');
+    localStorage.removeItem('username');
+    navigate('/');
   };
 
   const handleStatusChange = async (bookId, newStatus) => {
@@ -69,12 +79,15 @@ const HomePage = () => {
         Object.keys(newBooks).forEach(key => {
           newBooks[key] = newBooks[key].filter(book => book._id !== bookId);
         });
+
         if (newStatus === 'want to read') {
           newBooks.wantToRead.push(updatedBook);
         } else if (newStatus === 'currently reading') {
           newBooks.currentlyReading.push(updatedBook);
         } else if (newStatus === 'read') {
           newBooks.read.push(updatedBook);
+          // Incrementa el conteo de libros leídos
+          setBooksReadCount(prevCount => prevCount + 1);
         }
         return newBooks;
       });
@@ -100,6 +113,7 @@ const HomePage = () => {
         Object.keys(newBooks).forEach(key => {
           newBooks[key] = newBooks[key].filter(book => book._id !== bookId);
         });
+
         return newBooks;
       });
     } catch (error) {
@@ -109,38 +123,28 @@ const HomePage = () => {
 
   return (
     <div className="home-page">
-      <h1>Your Reading Tracker</h1>
-      <Button colorScheme='pink' size='sm' className="button" onClick={() => navigate('/add-book')}>Add New Book</Button>
-      <Button colorScheme='pink' size='sm' className="button" onClick={() => navigate('/discover-books')}>Discover Books</Button>
-      <Button colorScheme='pink' size='sm' className="button" onClick={handleLogout}>Logout</Button>
+      <UserGreeting userName={userName} />
+      <NavigationButtons onLogout={handleLogout} />
 
-      <ReadingGoal
-        readingGoal={readingGoal}
-        setReadingGoal={setReadingGoal}
-        inputGoal={inputGoal}
-        setInputGoal={setInputGoal}
-      />
+      <ReadingGoal booksRead={booksReadCount} />
 
       <BookList
         books={books.wantToRead}
         title="Want to Read"
         onStatusChange={handleStatusChange}
         onDelete={handleDelete}
-        className="book-list"
       />
       <BookList
         books={books.currentlyReading}
         title="Currently Reading"
         onStatusChange={handleStatusChange}
         onDelete={handleDelete}
-        className="book-list"
       />
       <BookList
         books={books.read}
         title="Read"
         onStatusChange={handleStatusChange}
         onDelete={handleDelete}
-        className="book-list"
       />
     </div>
   );

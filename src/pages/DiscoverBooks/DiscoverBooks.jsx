@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './DiscoverBooks.css';
 
 const DiscoverBooksPage = () => {
   const [query, setQuery] = useState('');
   const [books, setBooks] = useState([]);
+  const [filteredBooks, setFilteredBooks] = useState([]);
   const [error, setError] = useState('');
   const [addedBooks, setAddedBooks] = useState(new Set());
+  const [filterAuthor, setFilterAuthor] = useState(''); 
+  const [filterYear, setFilterYear] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,7 +28,7 @@ const DiscoverBooksPage = () => {
         }
 
         const data = await response.json();
-        const ids = new Set(data.map(book => book.title + book.author)); 
+        const ids = new Set(data.map(book => book.title + book.author));
         setAddedBooks(ids);
       } catch (error) {
         console.error('Error fetching added books:', error);
@@ -44,6 +48,7 @@ const DiscoverBooksPage = () => {
       }
       const data = await response.json();
       setBooks(data.items || []);
+      setFilteredBooks(data.items || []);
     } catch (error) {
       console.error('Error searching books:', error);
       setError('Failed to fetch books');
@@ -53,6 +58,26 @@ const DiscoverBooksPage = () => {
   const handleSearch = (event) => {
     event.preventDefault();
     searchBooks();
+  };
+
+  const applyFilters = () => {
+    let filtered = books;
+
+    if (filterAuthor) {
+      filtered = filtered.filter(book => book.volumeInfo.authors && book.volumeInfo.authors.includes(filterAuthor));
+    }
+
+    if (filterYear) {
+      filtered = filtered.filter(book => book.volumeInfo.publishedDate && book.volumeInfo.publishedDate.startsWith(filterYear));
+    }
+
+    setFilteredBooks(filtered);
+  };
+
+  const clearFilters = () => {
+    setFilterAuthor('');
+    setFilterYear('');
+    setFilteredBooks(books);
   };
 
   const addBookToList = async (book, status) => {
@@ -92,33 +117,62 @@ const DiscoverBooksPage = () => {
   };
 
   return (
-    <div>
-      <h1>Discover Books</h1>
-      <form onSubmit={handleSearch}>
+    <div className="discover-books-page">
+      <h1 className="page-title">Discover Books</h1>
+      <form className="search-form" onSubmit={handleSearch}>
         <input 
           type="text" 
+          className="search-input"
           value={query} 
           onChange={(e) => setQuery(e.target.value)} 
           placeholder="Search for books..." 
         />
-        <button type="submit">Search</button>
+        <button className="search-button" type="submit">Search</button>
       </form>
 
-      {error && <p>{error}</p>}
+      {/* Filtros */}
+      <div className="filters">
+        <label htmlFor="filterAuthor">Filter by Author:</label>
+        <input
+          id="filterAuthor"
+          type="text"
+          className="filter-input"
+          value={filterAuthor}
+          onChange={(e) => setFilterAuthor(e.target.value)}
+          placeholder="Author's name"
+        />
+        <label htmlFor="filterYear">Filter by Year:</label>
+        <input
+          id="filterYear"
+          type="number"
+          className="filter-input"
+          value={filterYear}
+          onChange={(e) => setFilterYear(e.target.value)}
+          placeholder="Year"
+        />
+        <div className="filter-buttons">
+          <button className="apply-filters-button" onClick={applyFilters}>Apply Filters</button>
+          <button className="clear-filters-button" onClick={clearFilters}>Clear Filters</button>
+        </div>
+      </div>
 
-      <div>
-        {books.length ? (
-          books.map(book => (
-            <div key={book.id}>
-              <p>{book.volumeInfo.title} by {book.volumeInfo.authors ? book.volumeInfo.authors.join(', ') : 'Unknown'}</p>
-              <p>{book.volumeInfo.publishedDate}</p>
-              <button onClick={() => addBookToList(book, 'want to read')}>Add to Want to Read</button>
-              <button onClick={() => addBookToList(book, 'currently reading')}>Add to Currently Reading</button>
-              <button onClick={() => addBookToList(book, 'read')}>Add to Read</button>
+      {error && <p className="error-message">{error}</p>}
+
+      <div className="books-list">
+        {filteredBooks.length ? (
+          filteredBooks.map(book => (
+            <div className="book-card" key={book.id}>
+              <p className="book-title">{book.volumeInfo.title} by {book.volumeInfo.authors ? book.volumeInfo.authors.join(', ') : 'Unknown'}</p>
+              <p className="book-year">{book.volumeInfo.publishedDate}</p>
+              <div className="book-actions">
+                <button className="add-button" onClick={() => addBookToList(book, 'want to read')}>Add to Want to Read</button>
+                <button className="add-button" onClick={() => addBookToList(book, 'currently reading')}>Add to Currently Reading</button>
+                <button className="add-button" onClick={() => addBookToList(book, 'read')}>Add to Read</button>
+              </div>
             </div>
           ))
         ) : (
-          <p>No books found</p>
+          <p className="no-books-message">No books found</p>
         )}
       </div>
     </div>
